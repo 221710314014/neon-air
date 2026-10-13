@@ -13,24 +13,23 @@ if (siteHeader) {
   }
 }
 
-if (navigation) {
-  if ('IntersectionObserver' in window) {
-    const sectionObserver = new IntersectionObserver((entries) => {
-      const visibleSections = entries.filter((entry) => entry.isIntersecting);
-      if (!visibleSections.length) return;
-      const currentSection = visibleSections[visibleSections.length - 1].target.id;
-      navigation.querySelectorAll('a:not(.nav-quote)').forEach((link) => {
-        if (link.getAttribute('href') === `#${currentSection}`) {
-          link.setAttribute('aria-current', 'location');
-        } else {
-          link.removeAttribute('aria-current');
-        }
-      });
-    }, { rootMargin: '-150px 0px -50% 0px', threshold: 0 });
-    document.querySelectorAll('main > section[id]').forEach((section) => {
-      if (navigation.querySelector(`a[href="#${section.id}"]`)) sectionObserver.observe(section);
+if (navigation && 'IntersectionObserver' in window) {
+  const sectionObserver = new IntersectionObserver((entries) => {
+    const visibleSections = entries.filter((entry) => entry.isIntersecting);
+    if (!visibleSections.length) return;
+    const currentSection = visibleSections[visibleSections.length - 1].target.id;
+    navigation.querySelectorAll('a:not(.nav-quote)').forEach((link) => {
+      if (link.getAttribute('href') === `#${currentSection}`) {
+        link.setAttribute('aria-current', 'location');
+      } else {
+        link.removeAttribute('aria-current');
+      }
     });
-  }
+  }, { rootMargin: '-150px 0px -50% 0px', threshold: 0 });
+
+  document.querySelectorAll('main > section[id]').forEach((section) => {
+    if (navigation.querySelector(`a[href="#${section.id}"]`)) sectionObserver.observe(section);
+  });
 }
 
 document.querySelectorAll('[data-service]').forEach((link) => {
@@ -49,6 +48,33 @@ document.querySelectorAll('[data-state]').forEach((link) => {
 
 const quotationForm = document.querySelector('#quotation-form');
 if (quotationForm) {
+  quotationForm.action = 'https://formsubmit.co/ajax/info@neonair.in';
+  quotationForm.removeAttribute('data-netlify');
+  quotationForm.removeAttribute('netlify-honeypot');
+
+  const netlifyFormName = quotationForm.querySelector('input[name="form-name"]');
+  if (netlifyFormName) netlifyFormName.remove();
+
+  const botField = quotationForm.querySelector('input[name="bot-field"]');
+  if (botField) botField.name = '_honey';
+
+  const hiddenFields = {
+    _subject: 'New NEON AIR quotation request',
+    _template: 'table',
+    _url: window.location.href.split('#')[0],
+  };
+
+  Object.entries(hiddenFields).forEach(([name, value]) => {
+    let input = quotationForm.querySelector(`input[name="${name}"]`);
+    if (!input) {
+      input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      quotationForm.prepend(input);
+    }
+    input.value = value;
+  });
+
   const submitButton = quotationForm.querySelector('button[type="submit"]');
   const formStatus = document.querySelector('#form-status');
   const idleButtonContent = submitButton.innerHTML;
@@ -56,6 +82,7 @@ if (quotationForm) {
   quotationForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     if (submitButton.disabled || !quotationForm.reportValidity()) return;
+
     submitButton.disabled = true;
     submitButton.textContent = 'Sending your request…';
     quotationForm.setAttribute('aria-busy', 'true');
@@ -63,20 +90,24 @@ if (quotationForm) {
     formStatus.textContent = 'Sending your quotation request…';
 
     try {
-      const response = await fetch('/', {
+      const payload = Object.fromEntries(new FormData(quotationForm).entries());
+      const response = await fetch('https://formsubmit.co/ajax/info@neonair.in', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(new FormData(quotationForm)).toString(),
-        signal: AbortSignal.timeout(20000),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(payload),
       });
-      if (!response.ok) throw new Error('Submission failed');
+
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || result.success === false) throw new Error('Submission failed');
+
       quotationForm.reset();
-      formStatus.dataset.state = 'success';
-      formStatus.textContent = 'Thank you. Your quotation request has been received. NEON AIR can follow up using the contact details you shared.';
+      window.location.href = 'thank-you.html';
     } catch {
       formStatus.dataset.state = 'error';
-      formStatus.textContent = 'We could not confirm that your request was received. Your details are still here. Please try again, or email info@neonair.in.';
-    } finally {
+      formStatus.textContent = 'We could not confirm that your request was received. Please try again, or email info@neonair.in.';
       submitButton.disabled = false;
       submitButton.innerHTML = idleButtonContent;
       quotationForm.removeAttribute('aria-busy');
