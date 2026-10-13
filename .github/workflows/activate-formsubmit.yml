@@ -1,0 +1,21 @@
+name: Activate quotation endpoint
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  activate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger FormSubmit activation email
+        run: |
+          set -e
+          curl --fail-with-body --silent --show-error \
+            -X POST 'https://formsubmit.co/ajax/info@neonair.in' \
+            -H 'Content-Type: application/json' \
+            -H 'Accept: application/json' \
+            --data '{"name":"NEON AIR deployment test","email":"info@neonair.in","aircraft":"Test submission - no customer aircraft","location":"Deployment test","service":"Help me choose","message":"Automated test to activate the NEON AIR website quotation endpoint. No action needed beyond confirming the FormSubmit activation email.","consent":"agreed","_subject":"NEON AIR website form activation test"}'
