@@ -48,69 +48,34 @@ document.querySelectorAll('[data-state]').forEach((link) => {
 
 const quotationForm = document.querySelector('#quotation-form');
 if (quotationForm) {
-  quotationForm.action = 'https://formsubmit.co/ajax/info@neonair.in';
-  quotationForm.removeAttribute('data-netlify');
-  quotationForm.removeAttribute('netlify-honeypot');
-
-  const netlifyFormName = quotationForm.querySelector('input[name="form-name"]');
-  if (netlifyFormName) netlifyFormName.remove();
-
-  const botField = quotationForm.querySelector('input[name="bot-field"]');
-  if (botField) botField.name = '_honey';
-
-  const hiddenFields = {
-    _subject: 'New NEON AIR quotation request',
-    _template: 'table',
-    _url: window.location.href.split('#')[0],
-  };
-
-  Object.entries(hiddenFields).forEach(([name, value]) => {
-    let input = quotationForm.querySelector(`input[name="${name}"]`);
-    if (!input) {
-      input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = name;
-      quotationForm.prepend(input);
-    }
-    input.value = value;
-  });
-
   const submitButton = quotationForm.querySelector('button[type="submit"]');
   const formStatus = document.querySelector('#form-status');
   const idleButtonContent = submitButton.innerHTML;
 
-  quotationForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    if (submitButton.disabled || !quotationForm.reportValidity()) return;
+  const restoreSubmitState = () => {
+    submitButton.disabled = false;
+    submitButton.innerHTML = idleButtonContent;
+    quotationForm.removeAttribute('aria-busy');
+    if (formStatus) {
+      formStatus.textContent = '';
+      delete formStatus.dataset.state;
+    }
+  };
+
+  quotationForm.addEventListener('submit', (event) => {
+    if (!quotationForm.reportValidity()) {
+      event.preventDefault();
+      return;
+    }
 
     submitButton.disabled = true;
     submitButton.textContent = 'Sending your request…';
     quotationForm.setAttribute('aria-busy', 'true');
-    formStatus.dataset.state = 'loading';
-    formStatus.textContent = 'Sending your quotation request…';
-
-    try {
-      const payload = Object.fromEntries(new FormData(quotationForm).entries());
-      const response = await fetch('https://formsubmit.co/ajax/info@neonair.in', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || result.success === false) throw new Error('Submission failed');
-
-      quotationForm.reset();
-      window.location.href = 'thank-you.html';
-    } catch {
-      formStatus.dataset.state = 'error';
-      formStatus.textContent = 'We could not confirm that your request was received. Please try again, or email info@neonair.in.';
-      submitButton.disabled = false;
-      submitButton.innerHTML = idleButtonContent;
-      quotationForm.removeAttribute('aria-busy');
+    if (formStatus) {
+      formStatus.dataset.state = 'loading';
+      formStatus.textContent = 'Sending your quotation request…';
     }
   });
+
+  window.addEventListener('pageshow', restoreSubmitState);
 }
