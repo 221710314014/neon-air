@@ -1,28 +1,33 @@
 # NEON AIR — Aircraft Detailing
 
-Premium aircraft detailing services serving India.
+Production website for NEON AIR, an aircraft detailing business serving India.
 
-## Website
+## Live site
 
-This is a responsive static website built with plain HTML, CSS, and JavaScript. No framework or build step is required.
+https://221710314014.github.io/neon-air/
 
-## Deployment
+## Hosting
 
-The site is intended for Netlify. The quotation form uses Netlify Forms with honeypot spam protection.
+The site is deployed free on GitHub Pages using `.github/workflows/deploy-pages.yml`. Every push to `main` redeploys the static site automatically.
 
-After deployment:
+## Stack
 
-1. Confirm Netlify detects the `quotation` form.
-2. Submit a real test enquiry.
-3. Configure form submission email notifications to `info@neonair.in`.
-4. Connect the production custom domain when ready.
+- Static HTML
+- CSS
+- Vanilla JavaScript
+- GitHub Pages / GitHub Actions
+- FormSubmit for quotation enquiries
 
-## Files
+No framework or server is required.
 
-- `index.html` — main website
-- `styles.css` — responsive styling
-- `site.js` — navigation and form enhancements
-- `thank-you.html` — non-JavaScript form confirmation page
-- `hero-private-jet.webp` — hero/about imagery
-- `india-map.webp` — India coverage map
-- `neon-air-logo.webp` — brand logo
+## Quotation form
+
+The live JavaScript adapts the original static form for GitHub Pages and submits enquiries to FormSubmit, which delivers them to `info@neonair.in`.
+
+FormSubmit requires one-time activation for a new destination email. The first submission triggers an activation email to `info@neonair.in`; confirm it before relying on the form for customer enquiries.
+
+After activation, test the form end-to-end and verify delivery to `info@neonair.in`.
+
+## Custom domain
+
+The site currently uses the default GitHub Pages project URL. When `neonair.in` DNS is pointed to GitHub Pages and the custom domain is saved in repository Settings → Pages, update the canonical/public URLs in robots.txt, sitemap.xml and any social/SEO metadata to the custom domain.
