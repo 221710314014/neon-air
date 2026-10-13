@@ -1,0 +1,72 @@
+name: One-time production source fix
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-source:
+    if: ${{ !contains(github.event.head_commit.message, '[source-fix]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Patch production HTML
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('index.html')
+          s = p.read_text()
+
+          old_desc = '<meta name="description" content="NEON AIR aircraft detailing in India. Explore Exterior Protection, surface protection and interior detailing, and request a tailored quotation for your aircraft.">'
+          if old_desc in s and 'rel="canonical"' not in s:
+              new_desc = '''<meta name="description" content="NEON AIR aircraft detailing in India. Exterior protection, surface protection and interior detailing, tailored to your aircraft.">
+            <meta name="robots" content="index,follow,max-image-preview:large">
+            <meta name="referrer" content="strict-origin-when-cross-origin">
+            <link rel="canonical" href="https://221710314014.github.io/neon-air/">
+            <meta property="og:type" content="website">
+            <meta property="og:site_name" content="NEON AIR">
+            <meta property="og:title" content="NEON AIR | Aircraft Detailing in India">
+            <meta property="og:description" content="Exterior, cabin and protective aircraft detailing, tailored to your aircraft across India.">
+            <meta property="og:url" content="https://221710314014.github.io/neon-air/">
+            <meta property="og:image" content="https://221710314014.github.io/neon-air/hero-private-jet.webp">
+            <meta property="og:image:alt" content="Private jet in a blue-lit hangar">
+            <meta name="twitter:card" content="summary_large_image">'''
+              s = s.replace(old_desc, new_desc)
+
+          s = s.replace('<link rel="preload" href="hero-private-jet.webp" as="image">', '<link rel="preload" href="hero-private-jet.webp" as="image" type="image/webp">')
+
+          old_form = '''<form name="quotation" id="quotation-form" method="POST" action="/thank-you" data-netlify="true" netlify-honeypot="bot-field" class="quote-form">
+                    <input type="hidden" name="form-name" value="quotation">
+                    <p hidden><label>Leave this field empty: <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>'''
+          new_form = '''<form name="quotation" id="quotation-form" method="POST" action="https://formsubmit.co/info@neonair.in" class="quote-form">
+                    <input type="hidden" name="_subject" value="New NEON AIR quotation request">
+                    <input type="hidden" name="_template" value="table">
+                    <input type="hidden" name="_next" value="https://221710314014.github.io/neon-air/thank-you.html">
+                    <input type="hidden" name="_url" value="https://221710314014.github.io/neon-air/">
+                    <input type="hidden" name="_autoresponse" value="Thank you for contacting NEON AIR. We received your aircraft detailing enquiry and will follow up using the contact details you provided.">
+                    <p hidden><label>Leave this field empty: <input name="_honey" tabindex="-1" autocomplete="off"></label></p>'''
+          if old_form in s:
+              s = s.replace(old_form, new_form)
+
+          s = s.replace('https://www.instagram.com/neon_air.in?cplk=MTF4bDludWRhMzQxeA==', 'https://www.instagram.com/neon_air.in/')
+          s = s.replace('<noscript><p class="privacy-note">Submitting opens a confirmation page. JavaScript is not required.</p></noscript>', '<noscript><p class="privacy-note">JavaScript is not required to submit this form.</p></noscript>')
+
+          p.write_text(s)
+          PY
+      - name: Commit source fix
+        run: |
+          if git diff --quiet; then
+            echo "No source changes needed"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Finalize production HTML [source-fix]"
+          git push
