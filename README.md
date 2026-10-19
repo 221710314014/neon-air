@@ -22,14 +22,16 @@ No framework or server is required.
 
 ## Quotation form
 
-The live JavaScript adapts the original static form for GitHub Pages and submits enquiries to FormSubmit, which delivers them to `info@neonair.in`.
+The HTML form posts directly to FormSubmit; JavaScript validates the fields and shows a sending state. Enquiries are delivered to `info@neonair.in`.
 
-FormSubmit requires one-time activation for a new destination email. The first submission triggers an activation email to `info@neonair.in`; confirm it before relying on the form for customer enquiries.
+FormSubmit activation for `https://neonair.in/` was completed on 19 October 2026. A labelled deployment test was received in the Zoho inbox and its submitted fields were checked. Fresh submissions use FormSubmit's reCAPTCHA before redirecting to `https://neonair.in/thank-you.html`.
 
-After activation, test the form end-to-end and verify delivery to `info@neonair.in`.
+The final fresh-submission test is awaiting the human reCAPTCHA step; its redirect has not yet been verified.
 
 ## Custom domain
 
 `neonair.in` is configured in repository Settings → Pages. GoDaddy DNS uses the four GitHub Pages apex A records (`185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`) and `www` CNAME `221710314014.github.io`. Zoho MX and email TXT records are preserved. Canonical, sitemap and quotation return URLs use `https://neonair.in/`.
 
-After DNS propagation, verify the Pages DNS check, certificate issuance and Enforce HTTPS setting, then test the quotation form and confirm inbox delivery.
+Verified on 19 October 2026: GitHub Pages deployment succeeded, DNS check passed, `https://neonair.in/` loaded successfully, and Enforce HTTPS was enabled. The canonical URL uses the custom domain and the primary page images loaded.
+
+The `https://www.neonair.in/` certificate still returned a name mismatch during verification; allow certificate/DNS propagation, then verify the www-to-apex redirect before considering that alternate hostname ready.
