@@ -1,0 +1,28 @@
+name: Verify live site
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-live.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify primary HTTPS site and quotation configuration
+        run: |
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --max-time 30 https://neonair.in/ -o /tmp/neon-home.html
+          grep -q 'NEON AIR' /tmp/neon-home.html
+          grep -q 'https://formsubmit.co/info@neonair.in' /tmp/neon-home.html
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --max-time 30 https://neonair.in/thank-you.html -o /tmp/neon-thanks.html
+          grep -q 'Your enquiry has been submitted' /tmp/neon-thanks.html
+      - name: Verify www HTTPS redirect
+        run: |
+          final_url=$(curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --max-time 30 --output /dev/null --write-out '%{url_effective}' https://www.neonair.in/)
+          test "$final_url" = 'https://neonair.in/'
