@@ -26,7 +26,7 @@ The HTML form posts directly to FormSubmit; JavaScript validates the fields and 
 
 FormSubmit activation for `https://neonair.in/` was completed on 19 October 2026. A labelled deployment test was received in the Zoho inbox and its submitted fields were checked. Fresh submissions use FormSubmit's reCAPTCHA before redirecting to `https://neonair.in/thank-you.html`.
 
-The final fresh-submission test is awaiting the human reCAPTCHA step; its redirect has not yet been verified.
+The final fresh-submission test passed on 19 October 2026 after reCAPTCHA: the browser returned to `/thank-you.html`, the quotation email containing the final-test fields arrived in the Zoho inbox, and the automatic acknowledgement was received.
 
 ## Custom domain
 
@@ -34,4 +34,6 @@ The final fresh-submission test is awaiting the human reCAPTCHA step; its redire
 
 Verified on 19 October 2026: GitHub Pages deployment succeeded, DNS check passed, `https://neonair.in/` loaded successfully, and Enforce HTTPS was enabled. The canonical URL uses the custom domain and the primary page images loaded.
 
-The `https://www.neonair.in/` certificate still returned a name mismatch during verification; allow certificate/DNS propagation, then verify the www-to-apex redirect before considering that alternate hostname ready.
+The `https://www.neonair.in/` certificate still returned a name mismatch during browser and independent GitHub-runner verification. Public DNS confirms the correct www CNAME. Certificate provisioning was retriggered after DNS propagation; verify the www-to-apex redirect before considering that alternate hostname ready.
+
+Run the `Verify live site` GitHub Actions workflow to validate both hostnames with strict TLS checks, the production quotation endpoint, and the thank-you page. This workflow does not send enquiries or disable certificate verification.
