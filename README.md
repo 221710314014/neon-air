@@ -4,7 +4,7 @@ Production website for NEON AIR, an aircraft detailing business serving India.
 
 ## Live site
 
-https://221710314014.github.io/neon-air/
+https://neonair.in/
 
 ## Hosting
 
@@ -30,4 +30,6 @@ After activation, test the form end-to-end and verify delivery to `info@neonair.
 
 ## Custom domain
 
-The site currently uses the default GitHub Pages project URL. When `neonair.in` DNS is pointed to GitHub Pages and the custom domain is saved in repository Settings → Pages, update the canonical/public URLs in robots.txt, sitemap.xml and any social/SEO metadata to the custom domain.
+`neonair.in` is configured in repository Settings → Pages. GoDaddy DNS uses the four GitHub Pages apex A records (`185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`) and `www` CNAME `221710314014.github.io`. Zoho MX and email TXT records are preserved. Canonical, sitemap and quotation return URLs use `https://neonair.in/`.
+
+After DNS propagation, verify the Pages DNS check, certificate issuance and Enforce HTTPS setting, then test the quotation form and confirm inbox delivery.
