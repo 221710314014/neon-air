@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://221710314014.github.io/neon-air/sitemap.xml
+Sitemap: https://neonair.in/sitemap.xml
