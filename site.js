@@ -69,13 +69,14 @@ if (quotationForm) {
     }
 
     submitButton.disabled = true;
-    submitButton.textContent = 'Sending your request…';
+    submitButton.textContent = 'Opening security check…';
     quotationForm.setAttribute('aria-busy', 'true');
     if (formStatus) {
       formStatus.dataset.state = 'loading';
-      formStatus.textContent = 'Sending your quotation request…';
+      formStatus.textContent = 'Complete the security check on the next page to send your request.';
     }
   });
 
   window.addEventListener('pageshow', restoreSubmitState);
 }
+

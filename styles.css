@@ -10,7 +10,7 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-offset, var(--header-height)) + 20px); }
 body { position: relative; isolation: isolate; margin: 0; background: var(--navy); color: var(--white); font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif; font-size: 16px; line-height: 1.65; }
-body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(#080f204d, #080f2066), url("hero-private-jet.webp") center / cover no-repeat; }
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(#080f204d, #080f2066), url("hero-private-jet-hq.webp") center / cover no-repeat; }
 button, input, select, textarea { font: inherit; }
 button, a, input, select, textarea, summary { -webkit-tap-highlight-color: transparent; }
 a { color: inherit; text-decoration: none; }
@@ -166,8 +166,11 @@ footer { background: #060d1ab3; }
 .footer-main p { font-size: 15px; color: var(--muted); margin-bottom: 0; }
 .footer-bottom { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--line); padding-block: 24px; font-size: 11px; color: var(--muted); }
 .confirmation-main { min-height: 75vh; display: grid; place-items: center; padding-block: 80px; }
-.confirmation-card { max-width: 650px; border-top: 2px solid var(--blue); padding-top: 40px; }
-.confirmation-card p:not(.eyebrow) { color: var(--muted); }
+.confirmation-card { width: 100%; max-width: 780px; border-top: 2px solid var(--blue); padding-top: 40px; }
+.confirmation-card h1 { font-size: clamp(52px, 7vw, 88px); line-height: 1.08; }
+.confirmation-card .eyebrow { font-size: clamp(13px, 2vw, 16px); }
+.confirmation-card p:not(.eyebrow) { color: var(--muted); font-size: clamp(18px, 2vw, 22px); line-height: 1.7; }
+.confirmation-card .button { font-size: 17px; }
 @keyframes enter { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 @media (min-width: 1500px) { .brand, .brand img { width: 390px; } .brand img { height: 126px; } .footer-brand { width: 280px; } .footer-brand img { width: 100%; height: 105px; } }
 @media (max-width: 1200px) {
@@ -262,3 +265,4 @@ footer { background: #060d1ab3; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
